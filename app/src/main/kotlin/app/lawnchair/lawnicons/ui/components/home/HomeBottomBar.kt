@@ -3,6 +3,7 @@ package app.lawnchair.lawnicons.ui.components.home
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Search
@@ -23,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import app.lawnchair.lawnicons.R
 import app.lawnchair.lawnicons.model.IconRequestModel
@@ -75,6 +77,27 @@ fun HomeBottomBar(
                     )
                 }
             }
+
+            SimpleTooltipBox(
+                label = stringResource(id = R.string.apply),
+            ) {
+                IconButton(
+                    onClick = {
+//                        com.motorola.personalize.app.IconPacksActivity
+                        val intent = Intent();
+                        intent.setClassName("com.motorola.personalize", "com.motorola.personalize.app.IconPacksActivity")
+                        if (intent.resolveActivity(context.packageManager) != null) {
+                            context.startActivity(intent)
+                        }
+                    },
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.applybutton),
+                        contentDescription = stringResource(id = R.string.apply),
+                        modifier = Modifier.requiredSize(40.dp),
+                    )
+                }
+            }
         },
         floatingActionButton = {
             SimpleTooltipBox(
@@ -115,4 +138,16 @@ private fun SimpleTooltipBox(
     ) {
         content()
     }
+}
+
+@Preview
+@Composable
+private fun HomeBottomBarPreview() {
+    HomeBottomBar(
+        context = androidx.compose.ui.platform.LocalContext.current,
+        iconRequestModel = null,
+        snackbarHostState = SnackbarHostState(),
+        onNavigate = {},
+        onExpandSearch = {},
+    )
 }
