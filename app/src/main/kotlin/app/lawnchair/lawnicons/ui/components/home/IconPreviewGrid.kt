@@ -1,5 +1,6 @@
 package app.lawnchair.lawnicons.ui.components.home
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.fadeIn
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -30,11 +32,14 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.ClickableText
+import androidx.compose.material3.CardElevation
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -45,20 +50,36 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.LinkAnnotation
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextLinkStyles
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withLink
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import app.lawnchair.lawnicons.R
 import app.lawnchair.lawnicons.model.IconInfo
 import app.lawnchair.lawnicons.repository.preferenceManager
+import app.lawnchair.lawnicons.ui.components.core.Card
 import app.lawnchair.lawnicons.ui.theme.LawniconsTheme
 import app.lawnchair.lawnicons.ui.util.PreviewLawnicons
 import app.lawnchair.lawnicons.ui.util.SampleData
 import app.lawnchair.lawnicons.ui.util.toPaddingValues
 import app.lawnchair.lawnicons.util.appIcon
+import java.net.URL
 import my.nanihadesuka.compose.InternalLazyVerticalGridScrollbar
 import my.nanihadesuka.compose.ScrollbarSelectionMode
 import my.nanihadesuka.compose.ScrollbarSettings
@@ -71,7 +92,7 @@ data class IconPreviewGridPadding(
 
     companion object {
         val Defaults = IconPreviewGridPadding(
-            topPadding = 0.dp,
+            topPadding = 10.dp,
             bottomPadding = 80.dp,
             horizontalPadding = 8.dp,
         )
@@ -106,10 +127,39 @@ fun IconPreviewGrid(
         verticalArrangement = Arrangement.Center,
         modifier = modifier.fillMaxWidth(),
     ) {
-        Box(
+
+
+        Column(
             modifier = containerModifier
                 .padding(bottom = contentPadding.bottomPadding),
         ) {
+            Card {
+
+                Column (
+                    modifier = Modifier.padding(20.dp),
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.porter_name),
+                        style = MaterialTheme.typography.titleLarge,
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    HyperlinkText(
+                        text = "Telegram Group",
+                        hyperlinks = listOf("https://t.me/MotoCustomization"),
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    HyperlinkText(
+                        text = "Buy Me a Coffee",
+                        hyperlinks = listOf("https://buymeacoffee.com/kalp96757"),
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    HyperlinkText(
+                        text = "UPI Link",
+                        hyperlinks = listOf("upi://pay?pa=kalp9675-1@okaxis&amp;pn=Kalp%20Shah"),
+                    )
+                }
+
+            }
             LazyVerticalGrid(
                 columns = GridCells.Adaptive(minSize = 80.dp),
                 contentPadding = WindowInsets.navigationBars.toPaddingValues(
@@ -227,63 +277,80 @@ fun AppBarListItem(modifier: Modifier = Modifier) {
     CenterAlignedTopAppBar(
         modifier = modifier,
         title = {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                if (!LocalInspectionMode.current) {
-                    Image(
-                        bitmap = context.appIcon().asImageBitmap(),
-                        contentDescription = stringResource(id = R.string.app_name),
-                        modifier = Modifier
-                            .size(36.dp)
-                            .clip(CircleShape)
-                            .combinedClickable(
-                                onClick = {},
-                                onLongClick = {
-                                    prefs.showDebugMenu.toggle()
-                                },
-                            ),
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    if (!LocalInspectionMode.current) {
+                        Image(
+                            bitmap = context.appIcon().asImageBitmap(),
+                            contentDescription = stringResource(id = R.string.app_name),
+                            modifier = Modifier
+                                .size(36.dp)
+                                .clip(CircleShape)
+                                .combinedClickable(
+                                    onClick = {},
+                                    onLongClick = {
+                                        prefs.showDebugMenu.toggle()
+                                    },
+                                ),
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        stringResource(id = R.string.port_name),
                     )
                 }
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    stringResource(id = R.string.app_name),
-                )
-            }
         },
     )
 }
-
-@OptIn(ExperimentalFoundationApi::class)
-@PreviewLawnicons
 @Composable
-private fun IconGridPreview() {
-    LawniconsTheme {
-        Surface {
-            IconPreviewGrid(
-                iconInfo = SampleData.iconInfoList,
-                onSendResult = {},
-                modifier = Modifier,
-                contentPadding = IconPreviewGridPadding.Defaults,
-                isIconPicker = false,
-            )
-        }
-    }
-}
+fun HyperlinkText(
+    modifier: Modifier = Modifier,
+    text: String,
+    linkText: List<String> = listOf(text),
+    hyperlinks: List<String>,
+    linkTextColor: Color = MaterialTheme.colorScheme.primary,
+    linkTextFontWeight: FontWeight = FontWeight.Normal,
+    linkTextDecoration: TextDecoration = TextDecoration.Underline,
+    fontSize: TextUnit = TextUnit.Unspecified,
+    fontFamily: FontFamily = FontFamily.Monospace
+) {
+    val uriHandler = LocalUriHandler.current
 
-@OptIn(ExperimentalFoundationApi::class)
-@PreviewLawnicons
-@Composable
-private fun IconGridExpandedPreview() {
-    LawniconsTheme {
-        Surface {
-            IconPreviewGrid(
-                iconInfo = SampleData.iconInfoList,
-                onSendResult = {},
-                modifier = Modifier,
-                contentPadding = IconPreviewGridPadding.ExpandedSize,
-                isIconPicker = false,
-            )
+    val annotatedString = buildAnnotatedString {
+        var lastIndex = 0
+        linkText.forEachIndexed { index, link ->
+            val startIndex = text.indexOf(link, lastIndex)
+            val endIndex = startIndex + link.length
+
+            if (startIndex > lastIndex) append(text.substring(lastIndex, startIndex))
+
+            val linkUrL = LinkAnnotation.Url(
+                hyperlinks[index], TextLinkStyles(
+                    SpanStyle(
+                        color = linkTextColor,
+                        fontSize = fontSize,
+                        fontWeight = linkTextFontWeight,
+                        textDecoration = linkTextDecoration,
+                        fontFamily = fontFamily
+                    )
+                )
+            ) {
+                val url = (it as LinkAnnotation.Url).url
+                uriHandler.openUri(url)
+            }
+            withLink(linkUrL) { append(link) }
+            append(" ")
+            lastIndex = endIndex + 1
         }
+        if (lastIndex < text.length) {
+            append(text.substring(lastIndex))
+        }
+        addStyle(
+            style = SpanStyle(
+                fontSize = fontSize, fontFamily = fontFamily
+            ), start = 0, end = text.length
+        )
     }
+    Text(text = annotatedString, modifier = modifier)
 }
